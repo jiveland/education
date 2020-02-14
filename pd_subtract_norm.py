@@ -1,6 +1,4 @@
 import pandas as pd
-import os
-wd=os.getcwd()
 
 df=pd.read_excel('Example_Data.xlsx')
 print(df.head(10))
