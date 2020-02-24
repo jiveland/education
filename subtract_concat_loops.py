@@ -10,23 +10,36 @@ print(dev)
 
 dfout=pd.DataFrame()
 dfout2 = pd.DataFrame()
-# dfout2=pd.DataFrame()
-time = 3.2
+
+time = [1.5,2.5]
+# addrow= {}
+data_list =['Data', 'Data Two']
+sub_list = ['Data Sub','Data Two Sub']
 # interpolation 
 for d in dev:
-    dfin = df.loc[df['Device']==d]
+    addrow_list = []
+
+    for data in data_list:
+        dfin = df.loc[(df['Device']==d)]
+        x=dfin['Time'].values
+        y=dfin[data].values
+        fit = np.polyfit(x,y,2)
+        for t in time:
+            yfit = np.polyval(fit, t)
+            addrow_list.append({'Time':t,'Device':d,data:yfit})
+        
+    addrow = dfin.append(addrow_list, ignore_index=True)
     
-    x=dfin['Time'].values
-    y=dfin['Data'].values
-    fit = np.polyfit(x,y,2)
-    ynew = np.polyval(fit, time)
-    addrow = dfin.append({'Time':time,'Device':d,'Data':ynew},ignore_index=True)
     dfout = dfout.append(addrow)
+print(dfout.head(45))
+
 #subtraction of 0 values
+
 for d in dev:
     dfin = dfout.loc[(dfout['Device']==d)]
-    dfin['sub'] = dfin['Data']-dfin.loc[dfin['Time']==0,'Data'].values
+    for data,sub in zip(data_list,sub_list):
+        dfin[sub] = dfin[data]-dfin.loc[dfin['Time']==0,data].values
+
     dfout2 = dfout2.append(dfin)
     
-print(dfout2.head(200))
-
+print(dfout2.head(20))
